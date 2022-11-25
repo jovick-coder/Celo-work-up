@@ -21,7 +21,7 @@
 
   <body>
     <nav>
-      <div class="h-16 shadow-2xl border-solid border-b-2 mx-auto">
+      <div class="h-16 shadow-2xl border-solid border-b-2 mx-auto flex">
         <div class="container mx-auto flex justify-between items-center">
           <div class="lg:w-1/4 mt-4">
             <p class="flex justify-end mr-3 mb-1">
@@ -45,38 +45,24 @@
               </svg>
             </p>
           </div>
-          <!-- <div class="lg:w-1/4 mt-3 flex">
-            <form class="flex flex-row border border-gray-200 rounded w-64">
-              <span class=""
-                ><i class="fa fa-search p-2 text-green-600"></i
-              ></span>
-              <input
-                class="appearance-none block w-64 text-gray-700 leading-tight focus:outline-none"
-                type="text"
-                placeholder="Find jobs"
-              />
-            </form>
-          </div> -->
-          <div class="flex w-2/4 mt-4">
-            <div class="flex">
-              <ul class="flex nav-link-ul">
+          <div class="flex w-2/4 mx-auto">
+              <ul class="flex nav-link-ul ml-auto">
                 <li class="cursor-pointer text-green-600 m-2">Hire Talents</li>
                 <li class="cursor-pointer m-2">Register</li>
                 <li class="cursor-pointer m-2">Login</li>
                 <li class="cursor-pointer m-2" style="display: none">
                   Profile
                 </li>
+                <div class=" nav-link-ul my-auto mr-1 ml-3 cursor-pointer bg-green-600 text-white p-2 rounded-full px-4 mx-auto" id="balance">... cUSD</div>
                 <button
-                  class="flex-no-shrink bg-red-500 px-5 ml-4 py-2 text-sm shadow-sm hover:shadow-lg font-medium tracking-wider border-2 border-red-500 text-white rounded-full"
+                  class="flex-no-shrink bg-red-500 px-5 py-2 text-sm shadow-sm mx-auto hover:shadow-lg font-medium tracking-wider border-2 border-red-500 text-white rounded-full"
                   id="logout-button"
                   style="display: none"
                 >
                   Logout
                 </button>
               </ul>
-              <div class=" nav-link-ul my-auto mr-5 cursor-pointer bg-green-600 text-white p-2 rounded-full px-4 m-2" id="balance">... cUSD</div>
             </div>
-          </div>
         </div>
       </div>
     </nav>
