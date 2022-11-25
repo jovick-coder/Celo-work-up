@@ -1,3 +1,58 @@
+import Web3 from "web3";
+import { newKitFromWeb3 } from "@celo/contractkit";
+import BigNumber from "bignumber.js";
+import marketplaceAbi from "../contract/marketplace.abi.json";
+import erc20Abi from "../contract/erc20.abi.json";
+
+const ERC20_DECIMALS = 18;
+const MPContractAddress = "0x178134c92EC973F34dD0dd762284b852B211CFC8";
+const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
+
+let kit;
+let contract;
+let products = [];
+
+// on page load
+window.addEventListener("load", async () => {
+  await connectCeloWallet();
+  await getBalance();
+  // await getProducts();
+  // notificationOff();
+});
+
+const connectCeloWallet = async function () {
+  if (window.celo) {
+    try {
+      await window.celo.enable();
+
+      const web3 = new Web3(window.celo);
+      kit = newKitFromWeb3(web3);
+
+      const accounts = await kit.web3.eth.getAccounts();
+      kit.defaultAccount = accounts[0];
+
+      contract = new kit.web3.eth.Contract(marketplaceAbi, MPContractAddress);
+    } catch (error) {
+      showNotification({
+        header: `Celo Error error`,
+        description: `${error}.`,
+      });
+      console.log(error);
+    }
+  } else {
+    showNotification({
+      header: `Celo Error`,
+      description: `  Please install the CeloExtensionWallet.`,
+    });
+  }
+};
+
+const getBalance = async function () {
+  const totalBalance = await kit.getTotalBalance(kit.defaultAccount);
+  const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2);
+  document.querySelector("#balance").innerHTML = cUSDBalance + " <b>cUSD</b>";
+};
+
 const talentList = [
   {
     name: "John",
