@@ -31,10 +31,12 @@ const connectCeloWallet = async function () {
       const accounts = await kit.web3.eth.getAccounts();
       kit.defaultAccount = accounts[0];
 
+      fillWalletAddressInput(accounts[0]);
+
       contract = new kit.web3.eth.Contract(marketplaceAbi, MPContractAddress);
     } catch (error) {
       showNotification({
-        header: `Celo Error error`,
+        header: `Celo Error`,
         description: `${error}.`,
       });
       console.log(error);
@@ -272,6 +274,13 @@ function saveNewTalent(newTalent) {
 document.querySelector("#login-form").addEventListener("submit", (e) => {
   handelLoginFormSubmission(e);
 });
+
+function fillWalletAddressInput(address) {
+  // auto fill wallet address on forms
+  document.querySelectorAll(".wallet-address-input").forEach((addressInput) => {
+    addressInput.value = address;
+  });
+}
 
 function handelLoginFormSubmission(e) {
   e.preventDefault();
