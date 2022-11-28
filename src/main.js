@@ -432,7 +432,8 @@ function handelLogin() {
   profileDivElement[4].innerHTML = profile.priceType;
   profileDivElement[5].innerHTML = profile.level;
   profileDivElement[6].innerHTML = `$${profile.price}`;
-  profileDivElement[7].innerHTML = profile.date;
+  profileDivElement[7].innerHTML = `${profile.hireCount} times`;
+  profileDivElement[8].innerHTML = profile.date;
 
   openPage(0);
 }
