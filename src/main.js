@@ -41,7 +41,18 @@ window.addEventListener("load", async () => {
   await connectCeloWallet();
   await getBalance();
   await getTalentList();
-  // notificationOff();
+
+  // check if account is already logged in
+  const accountLogIn = window.localStorage.getItem("workUpTalentLogin");
+  const profile = window.localStorage.getItem("workUpTalent");
+
+  if (accountLogIn === "true" && profile !== undefined) {
+    showNotification({
+      header: "Welcome Back",
+      description: "Your account was logged in",
+    });
+    handelLogin();
+  }
 });
 
 const connectCeloWallet = async function () {
@@ -154,7 +165,7 @@ function mapTalent(talentArray) {
     const component = `
               <div class="w-full py-12 lg:flex border border-gray-200" id="${id}">
                 <div
-                  class="lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal px-8">
+                  class="lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal px-8 w-full">
                   <div class="mb-8">
                     <div class="text-gray-900 font-bold text-xl">${name}</div>
                     <div class="text-gray-900 font-bold">${skills}</div>
@@ -169,16 +180,16 @@ function mapTalent(talentArray) {
                     <p class="text-gray-700 text-base">${description}</p>
                   </div>
                   <div class="flex items-center">
-                  <button class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button">
+                  <div class="text-sm">
+                    <p class="text-gray-600">${date}</p>
+                  </div>
+                  <button class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button float-end">
                   Hire for $${price}
                   </button>
                   </div>
                   </div>
                   </div>
                   `;
-    // <div class="text-sm">
-    //   <p class="text-gray-600">${date}</p>
-    // </div>
     // <p class="text-gray-900 leading-none">Jonathan Reinink</p>
 
     return (talentListDiv.innerHTML += component);
@@ -291,15 +302,8 @@ function handelRegistrationFormSubmission(e) {
     formElement[6].value,
     formElement[7].value,
     formElement[3].value,
+    dateFunction(),
   ];
-  //  _name,
-  //    _priceType,
-  //    _level,
-  //    _skills,
-  //    _description,
-  //    _password,
-  //    _price,
-  //    _hireCount;
   saveNewTalent(newTalent);
 }
 
@@ -376,38 +380,25 @@ function handelLoginFormSubmission(e) {
     });
   }
 
-  const profile = window.localStorage.getItem("workUpTalent");
-
-  if (!profile) {
-    showNotification({
-      header: "Login Error",
-      description: "Account not found, register new account",
-    });
-    return openPage(1);
-  }
-  if (formElement[1].value !== JSON.parse(profile).password) {
-    return showNotification({
-      header: "Login Error",
-      description: "Invalid password reenter password",
-    });
-  }
-  showNotification({
-    header: "Login successful",
-    description: "Account successfully logged in",
+  talentList.forEach((talent) => {
+    if (
+      talent.owner === kit.defaultAccount &&
+      talent.password === formElement[1].value
+    ) {
+      showNotification({
+        header: "Login successful",
+        description: "Account successfully logged in",
+      });
+      window.localStorage.setItem("workUpTalentLogin", true);
+      window.localStorage.setItem("workUpTalent", JSON.stringify(talent));
+      handelLogin();
+    } else {
+      showNotification({
+        header: "Login Error",
+        description: "Invalid password try again",
+      });
+    }
   });
-  window.localStorage.setItem("workUpTalentLogin", true);
-
-  handelLogin();
-}
-
-// check if account is already logged in
-const accountLogIn = window.localStorage.getItem("workUpTalentLogin");
-if (accountLogIn === "true") {
-  showNotification({
-    header: "Welcome Back",
-    description: "Account successfully logged in",
-  });
-  handelLogin();
 }
 
 function handelLogin() {
@@ -420,13 +411,13 @@ function handelLogin() {
 
   const profileDivElement = profileInformation.children;
   const profile = JSON.parse(window.localStorage.getItem("workUpTalent"));
-  profileDivElement[0].innerHTML = profile.address;
+  profileDivElement[0].innerHTML = profile.owner;
   profileDivElement[1].innerHTML = profile.name;
   profileDivElement[2].innerHTML = profile.skills;
   profileDivElement[3].innerHTML = profile.description;
   profileDivElement[4].innerHTML = profile.priceType;
   profileDivElement[5].innerHTML = profile.level;
-  profileDivElement[6].innerHTML = profile.price;
+  profileDivElement[6].innerHTML = `$${profile.price}`;
   profileDivElement[7].innerHTML = profile.date;
 
   openPage(0);
@@ -457,6 +448,7 @@ document
         description: "Confirm Password do not match profile password",
       });
     }
+    return;
     handelLogout();
     localStorage.removeItem("workUpTalent");
   });
