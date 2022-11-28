@@ -84,16 +84,18 @@ const getTalentList = async function () {
   const _talentList = [];
   for (let i = 0; i < _talentListLength; i++) {
     let _talent = new Promise(async (resolve, reject) => {
-      let p = await contract.methods.getTalentList(i).call();
+      let talent = await contract.methods.getTalentList(i).call();
+
       resolve({
-        index: i,
-        owner: p[0],
-        name: p[1],
-        image: p[2],
-        description: p[3],
-        location: p[4],
-        price: new BigNumber(p[5]),
-        sold: p[6],
+        owner: talent[0],
+        name: talent[1],
+        priceType: talent[2],
+        level: talent[3],
+        skills: talent[4],
+        description: talent[5],
+        password: talent[6],
+        price: new BigNumber(talent[7]),
+        hireCount: talent[8],
       });
     });
     _talentList.push(_talent);
