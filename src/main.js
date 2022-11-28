@@ -13,6 +13,15 @@ let contract;
 // let products = [];
 let talentList = [];
 
+async function approve(_price) {
+  const cUSDContract = new kit.web3.eth.Contract(IERC, cUSDContractAddress);
+
+  const result = await cUSDContract.methods
+    .approve(contractAddress, _price)
+    .send({ from: kit.defaultAccount });
+  return result;
+}
+
 // on page load
 window.addEventListener("load", async () => {
   await connectCeloWallet();
@@ -179,13 +188,41 @@ function mapTalent(talentArray) {
   });
 }
 
-function hireTalent(id) {
-  console.log(talentList[id]);
-  const talent = talentList[id];
+async function hireTalent(index) {
+  console.log(`ID${index}`, talentList[index]);
+  const talent = talentList[index];
   showNotification({
-    header: `Hire Talent ${talent.name}`,
+    header: `Precessing Hire Talent ${talent.name}`,
     description: `Talent ${talent.name} is hired for ${talent.price}`,
   });
+  try {
+    await approve(talentList[index].price);
+  } catch (error) {
+    // notification(`⚠️ ${error}.`);
+    showNotification({
+      header: `Celo Error`,
+      description: `${error}.`,
+    });
+    console.log(error);
+  }
+
+  try {
+    const result = await contract.methods
+      .hireTalent(index)
+      .send({ from: kit.defaultAccount });
+    showNotification({
+      header: `Hire Successful`,
+      description: `You successfully Hire ${talentList[index].name}`,
+    });
+    getTalentList();
+    getBalance();
+  } catch (error) {
+    showNotification({
+      header: `Celo Error`,
+      description: `${error}.`,
+    });
+    console.log(error);
+  }
 }
 function showNotification(object) {
   let notificationHeader = notification.querySelector(".header");
@@ -201,7 +238,6 @@ function showNotification(object) {
 function hideNotification() {
   notification.style.display = "none";
 }
-// setInterval(showNotification, 1000);
 
 document.querySelector("#registration-form").addEventListener("submit", (e) => {
   handelRegistrationFormSubmission(e);
@@ -420,6 +456,7 @@ document
     const confirmPassword = prompt("Ender password to delete account");
     const profile = JSON.parse(window.localStorage.getItem("workUpTalent"));
 
+    if (confirmPassword === "" || confirmPassword === undefined) return;
     if (confirmPassword !== profile.password) {
       return showNotification({
         header: "Action denied",
