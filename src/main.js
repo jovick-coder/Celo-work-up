@@ -1,22 +1,46 @@
 import Web3 from "web3";
 import { newKitFromWeb3 } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
-import marketplaceAbi from "../contract/marketplace.abi.json";
-import erc20Abi from "../contract/erc20.abi.json";
+import CELOWORKUP from "../contract/celoWorkUp.abi.json";
+import IERC from "../contract/IERC.abi.json";
 
 const ERC20_DECIMALS = 18;
-const MPContractAddress = "0x178134c92EC973F34dD0dd762284b852B211CFC8";
+const contractAddress = "0xB9c254325C662a7C7c26C746e2D3A6C554B7a021";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
 let contract;
-let products = [];
+// let products = [];
+let talentList = [
+  {
+    name: "John",
+    skills: "FrontEnd Developer",
+    description:
+      "Immediate need-web research, I am seeking a professional to assist in web research and phone calls to create an excel sheet. Need to find companies in Romania make uniforms, especially for private securities companies and the army; for each company, I need the production manager's email contact.",
+    priceType: "Fixed",
+    level: "Entry level",
+    price: "25",
+    hireCount: "1",
+    date: "Aug 18",
+  },
+  {
+    name: "Paul",
+    skills: "BackEnd Developer",
+    description:
+      "Immediate need-web research, I am seeking a professional to assist in web research and phone calls to create an excel sheet. Need to find companies in Romania make uniforms, especially for private securities companies and the army; for each company, I need the production manager's email contact.",
+    priceType: "Fixed",
+    level: "Senor level",
+    price: "50",
+    hireCount: "5",
+    date: "Aug 18",
+  },
+];
 
 // on page load
 window.addEventListener("load", async () => {
   await connectCeloWallet();
   await getBalance();
-  // await getProducts();
+  await getTalentList();
   // notificationOff();
 });
 
@@ -33,7 +57,7 @@ const connectCeloWallet = async function () {
 
       fillWalletAddressInput(accounts[0]);
 
-      contract = new kit.web3.eth.Contract(marketplaceAbi, MPContractAddress);
+      contract = new kit.web3.eth.Contract(CELOWORKUP, contractAddress);
     } catch (error) {
       showNotification({
         header: `Celo Error`,
@@ -55,28 +79,30 @@ const getBalance = async function () {
   document.querySelector("#balance").innerHTML = cUSDBalance + " <b>cUSD</b>";
 };
 
-const talentList = [
-  {
-    name: "John",
-    skills: "FrontEnd Developer",
-    description:
-      "Immediate need-web research, I am seeking a professional to assist in web research and phone calls to create an excel sheet. Need to find companies in Romania make uniforms, especially for private securities companies and the army; for each company, I need the production manager's email contact.",
-    priceType: "Fixed",
-    level: "Entry level",
-    price: "25",
-    data: "Aug 18",
-  },
-  {
-    name: "Paul",
-    skills: "BackEnd Developer",
-    description:
-      "Immediate need-web research, I am seeking a professional to assist in web research and phone calls to create an excel sheet. Need to find companies in Romania make uniforms, especially for private securities companies and the army; for each company, I need the production manager's email contact.",
-    priceType: "Fixed",
-    level: "Senor level",
-    price: "50",
-    data: "Aug 18",
-  },
-];
+const getTalentList = async function () {
+  const _talentListLength = await contract.methods.getTalentListLength().call();
+  const _talentList = [];
+  for (let i = 0; i < _talentListLength; i++) {
+    let _talent = new Promise(async (resolve, reject) => {
+      let p = await contract.methods.getTalentList(i).call();
+      resolve({
+        index: i,
+        owner: p[0],
+        name: p[1],
+        image: p[2],
+        description: p[3],
+        location: p[4],
+        price: new BigNumber(p[5]),
+        sold: p[6],
+      });
+    });
+    _talentList.push(_talent);
+  }
+  talentList = await Promise.all(_talentList);
+
+  console.log("talentList", talentList);
+  mapTalent(talentList);
+};
 
 let sections = document.querySelectorAll("section");
 let navLinkUl = document.querySelector(".nav-link-ul");
@@ -102,12 +128,27 @@ function openPage(pageId) {
 }
 
 // map talents to DOM
-mapTalent(talentList);
+// mapTalent(talentList);
 function mapTalent(talentArray) {
   // console.log();
-
+  talentListDiv.innerHTML = "";
+  document.querySelector(".loading-screen").style.display = "none";
+  if (talentArray.length === 0) {
+    return (talentListDiv.innerHTML += `
+ <h3 class='text-center text-lg py-20'> No Talent Found</h3>
+ `);
+  }
   talentArray.map((talent, id) => {
-    const { name, skills, description, priceType, level, price, data } = talent;
+    const {
+      name,
+      skills,
+      description,
+      priceType,
+      level,
+      price,
+      date,
+      hireCount,
+    } = talent;
     const component = `
               <div class="w-full py-12 lg:flex border border-gray-200" id="${id}">
                 <div
@@ -115,6 +156,10 @@ function mapTalent(talentArray) {
                   <div class="mb-8">
                     <div class="text-gray-900 font-bold text-xl">${name}</div>
                     <div class="text-gray-900 font-bold">${skills}</div>
+                    <p class="text-gray-700 text-base pt-0 pb-0">
+                      <span class="text-black">Hired</span>
+                      ${hireCount} times
+                    </p>
                     <p class="text-gray-700 text-base pt-5 pb-2">
                       <span class="text-black">${priceType} Price-</span>
                       ${level} -Est budget $${price}
@@ -122,16 +167,16 @@ function mapTalent(talentArray) {
                     <p class="text-gray-700 text-base">${description}</p>
                   </div>
                   <div class="flex items-center">
-                    <div class="text-sm">
-                      <p class="text-gray-600">${data}</p>
-                    </div>
-                    <button class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button">
-                      Hire for $${price}
-                    </button>
+                  <button class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button">
+                  Hire for $${price}
+                  </button>
                   </div>
-                </div>
-              </div>
-    `;
+                  </div>
+                  </div>
+                  `;
+    // <div class="text-sm">
+    //   <p class="text-gray-600">${date}</p>
+    // </div>
     // <p class="text-gray-900 leading-none">Jonathan Reinink</p>
 
     return (talentListDiv.innerHTML += component);
@@ -225,17 +270,34 @@ function handelRegistrationFormSubmission(e) {
     });
   }
 
-  const newTalent = {
-    address: formElement[0].value,
-    name: formElement[1].value,
-    priceType: formElement[2].value,
-    price: formElement[3].value,
-    level: formElement[4].value,
-    skills: formElement[5].value,
-    description: formElement[6].value,
-    password: formElement[7].value,
-    date: dateFunction(),
-  };
+  // const newTalent = {
+  //   address: formElement[0].value,
+  //   name: formElement[1].value,
+  //   priceType: formElement[2].value,
+  //   level: formElement[4].value,
+  //   skills: formElement[5].value,
+  //   description: formElement[6].value,
+  //   password: formElement[7].value,
+  //   price: formElement[3].value,
+  //   // date: dateFunction(),
+  // };
+  const newTalent = [
+    formElement[1].value,
+    formElement[2].value,
+    formElement[4].value,
+    formElement[5].value,
+    formElement[6].value,
+    formElement[7].value,
+    formElement[3].value,
+  ];
+  //  _name,
+  //    _priceType,
+  //    _level,
+  //    _skills,
+  //    _description,
+  //    _password,
+  //    _price,
+  //    _hireCount;
   saveNewTalent(newTalent);
 }
 
@@ -259,16 +321,28 @@ function dateFunction() {
   return `${monthsArray[getDate.getMonth()]} ${getDate.getDate()}`;
 }
 
-function saveNewTalent(newTalent) {
-  // console.log(newTalent);
-  talentList.push(newTalent);
+async function saveNewTalent(newTalent) {
+  // talentList.push(newTalent);
+
+  try {
+    const result = await contract.methods
+      .registerTalent(...newTalent)
+      .send({ from: kit.defaultAccount });
+  } catch (error) {
+    console.log(error);
+    return showNotification({
+      header: "Registration Error",
+      description: `${error}.`,
+    });
+  }
+
   showNotification({
     header: "Registration Successful",
     description: "Account successfully created login account.",
   });
-  window.localStorage.setItem("workUpTalent", JSON.stringify(newTalent));
+  // window.localStorage.setItem("workUpTalent", JSON.stringify(newTalent));
+  getTalentList();
   openPage(2);
-  mapTalent(talentList);
 }
 
 document.querySelector("#login-form").addEventListener("submit", (e) => {
