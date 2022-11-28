@@ -11,30 +11,7 @@ const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 let kit;
 let contract;
 // let products = [];
-let talentList = [
-  {
-    name: "John",
-    skills: "FrontEnd Developer",
-    description:
-      "Immediate need-web research, I am seeking a professional to assist in web research and phone calls to create an excel sheet. Need to find companies in Romania make uniforms, especially for private securities companies and the army; for each company, I need the production manager's email contact.",
-    priceType: "Fixed",
-    level: "Entry level",
-    price: "25",
-    hireCount: "1",
-    date: "Aug 18",
-  },
-  {
-    name: "Paul",
-    skills: "BackEnd Developer",
-    description:
-      "Immediate need-web research, I am seeking a professional to assist in web research and phone calls to create an excel sheet. Need to find companies in Romania make uniforms, especially for private securities companies and the army; for each company, I need the production manager's email contact.",
-    priceType: "Fixed",
-    level: "Senor level",
-    price: "50",
-    hireCount: "5",
-    date: "Aug 18",
-  },
-];
+let talentList = [];
 
 // on page load
 window.addEventListener("load", async () => {
