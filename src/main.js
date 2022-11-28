@@ -10,8 +10,16 @@ const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
 let contract;
-// let products = [];
 let talentList = [];
+
+// get DOM elements
+let sections = document.querySelectorAll("section");
+let navLinkUl = document.querySelector(".nav-link-ul");
+let talentListDiv = document.querySelector("#talent-list");
+let navLinks = navLinkUl.querySelectorAll("li");
+let logoutButton = navLinkUl.querySelector("button");
+let notification = document.querySelector(".notification");
+let profileInformation = document.querySelector("#profile-information");
 
 async function approve(_price) {
   const cUSDContract = new kit.web3.eth.Contract(IERC, cUSDContractAddress);
@@ -28,6 +36,9 @@ window.addEventListener("load", async () => {
   await getBalance();
   await getTalentList();
 
+  // page navigation
+  openPage(0);
+
   // check if account is already logged in
   const accountLogIn = window.localStorage.getItem("workUpTalentLogin");
   const profile = window.localStorage.getItem("workUpTalent");
@@ -41,6 +52,7 @@ window.addEventListener("load", async () => {
   }
 });
 
+// connect to celo wallet
 const connectCeloWallet = async function () {
   if (window.celo) {
     try {
@@ -70,12 +82,14 @@ const connectCeloWallet = async function () {
   }
 };
 
+// get celo wallet balance
 const getBalance = async function () {
   const totalBalance = await kit.getTotalBalance(kit.defaultAccount);
   const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2);
   document.querySelector("#balance").innerHTML = cUSDBalance + " <b>cUSD</b>";
 };
 
+// get list of talents from block
 const getTalentList = async function () {
   const _talentListLength = await contract.methods.getTalentListLength().call();
   const _talentList = [];
@@ -100,21 +114,11 @@ const getTalentList = async function () {
   }
   talentList = await Promise.all(_talentList);
 
-  console.log("talentList", talentList);
+  // console.log("talentList", talentList);
   mapTalent(talentList);
 };
 
-let sections = document.querySelectorAll("section");
-let navLinkUl = document.querySelector(".nav-link-ul");
-let talentListDiv = document.querySelector("#talent-list");
-let navLinks = navLinkUl.querySelectorAll("li");
-let logoutButton = navLinkUl.querySelector("button");
-let notification = document.querySelector(".notification");
-let profileInformation = document.querySelector("#profile-information");
-
-// page navigation
-openPage(0);
-
+// page navigation function
 function openPage(pageId) {
   navLinks.forEach((link, i) => {
     link.addEventListener("click", () => openPage(i));
@@ -128,7 +132,6 @@ function openPage(pageId) {
 }
 
 // map talents to DOM
-// mapTalent(talentList);
 function mapTalent(talentArray) {
   // console.log();
   talentListDiv.innerHTML = "";
@@ -149,45 +152,49 @@ function mapTalent(talentArray) {
       date,
       hireCount,
     } = talent;
-    const component = `
-              <div class="w-full py-12 lg:flex border border-gray-200" id="${id}">
-                <div
-                  class="lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal px-8 w-full">
-                  <div class="mb-8">
-                    <div class="text-gray-900 font-bold text-xl">${name}</div>
-                    <div class="text-gray-900 font-bold">${skills}</div>
-                    <p class="text-gray-700 text-base pt-0 pb-0">
-                      <span class="text-black">Hired</span>
-                      ${hireCount} times
-                    </p>
-                    <p class="text-gray-700 text-base pt-5 pb-2">
-                      <span class="text-black">${priceType} Price-</span>
-                      ${level} -Est budget $${price}
-                    </p>
-                    <p class="text-gray-700 text-base">${description}</p>
-                  </div>
-                  <div class="flex items-center">
-                  <div class="text-sm">
-                    <p class="text-gray-600">${date}</p>
-                  </div>
-                  <button class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button float-end">
-                  Hire for $${price}
-                  </button>
-                  </div>
-                  </div>
-                  </div>
+    const cardComponent = `
+                        <div class="w-full py-12 lg:flex border border-gray-200" id="${id}">
+                          <div
+                          class="lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal px-8 w-full"
+                          >
+                            <div class="mb-8">
+                              <div class="text-gray-900 font-bold text-xl">${name}</div>
+                              <div class="text-gray-900 font-bold">${skills}</div>
+                                <p class="text-gray-700 text-base pt-0 pb-0">
+                                  <span class="text-black">Hired</span>
+                                  ${hireCount} times
+                                </p>
+                                <p class="text-gray-700 text-base pt-5 pb-2">
+                                  <span class="text-black">${priceType} Price-</span>
+                                  ${level} -Est budget $${price}
+                                </p>
+                                <p class="text-gray-700 text-base">${description}</p>
+                              </div>
+                              <div class="flex items-center">
+                                <div class="text-sm">
+                                  <p class="text-gray-600">${date}</p>
+                                </div>
+                                <button
+                                class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button float-end"
+                                >
+                                  Hire for $${price}
+                                </button>
+                            </div>
+                          </div>
+                        </div>
                   `;
-    // <p class="text-gray-900 leading-none">Jonathan Reinink</p>
 
-    return (talentListDiv.innerHTML += component);
+    return (talentListDiv.innerHTML += cardComponent);
   });
 
+  // get hire buttons
   let hireTalentButtons = document.querySelectorAll(".hire-talent-button");
   hireTalentButtons.forEach((talent, i) => {
     talent.addEventListener("click", () => hireTalent(i));
   });
 }
 
+// hire talent function
 async function hireTalent(index) {
   console.log(`ID${index}`, talentList[index]);
   const talent = talentList[index];
@@ -198,7 +205,6 @@ async function hireTalent(index) {
   try {
     await approve(talentList[index].price);
   } catch (error) {
-    // notification(`⚠️ ${error}.`);
     showNotification({
       header: `Celo Error`,
       description: `${error}.`,
@@ -224,6 +230,8 @@ async function hireTalent(index) {
     console.log(error);
   }
 }
+
+// show notification function
 function showNotification(object) {
   let notificationHeader = notification.querySelector(".header");
   let notificationDescription = notification.querySelector(".description");
@@ -235,14 +243,18 @@ function showNotification(object) {
   closeButton.addEventListener("click", () => hideNotification());
   setTimeout(() => hideNotification(), 5000);
 }
+
+// hide notification function
 function hideNotification() {
   notification.style.display = "none";
 }
 
 document.querySelector("#registration-form").addEventListener("submit", (e) => {
+  // onsubmit run function
   handelRegistrationFormSubmission(e);
 });
 
+// register talent function
 function handelRegistrationFormSubmission(e) {
   e.preventDefault();
 
@@ -321,6 +333,7 @@ function handelRegistrationFormSubmission(e) {
   saveNewTalent(newTalent);
 }
 
+// get current date function
 function dateFunction() {
   var getDate = new Date();
   var monthsArray = [
@@ -341,9 +354,8 @@ function dateFunction() {
   return `${monthsArray[getDate.getMonth()]} ${getDate.getDate()}`;
 }
 
+// save talent profile function
 async function saveNewTalent(newTalent) {
-  // talentList.push(newTalent);
-
   try {
     const result = await contract.methods
       .registerTalent(...newTalent)
@@ -366,6 +378,7 @@ async function saveNewTalent(newTalent) {
 }
 
 document.querySelector("#login-form").addEventListener("submit", (e) => {
+  // onsubmit run function
   handelLoginFormSubmission(e);
 });
 
@@ -376,6 +389,7 @@ function fillWalletAddressInput(address) {
   });
 }
 
+// handel login function
 function handelLoginFormSubmission(e) {
   e.preventDefault();
 
@@ -415,6 +429,7 @@ function handelLoginFormSubmission(e) {
   });
 }
 
+// render login state
 function handelLogin() {
   navLinks[1].style.display = "none";
   navLinks[2].style.display = "none";
@@ -423,6 +438,7 @@ function handelLogin() {
 
   logoutButton.addEventListener("click", () => handelLogout());
 
+  // fill Profile
   const profileDivElement = profileInformation.children;
   const profile = JSON.parse(window.localStorage.getItem("workUpTalent"));
   profileDivElement[0].innerHTML = profile.owner;
@@ -438,6 +454,7 @@ function handelLogin() {
   openPage(0);
 }
 
+// handel Logout function
 function handelLogout() {
   let confirmLogout = confirm("You will be logged out of your account!!!");
   if (!confirmLogout) {
@@ -451,13 +468,13 @@ function handelLogout() {
   openPage(0);
 }
 
+// get delete profile button
 document
   .querySelector("#delete-account-button")
   .addEventListener("click", (e) => {
     const confirmPassword = prompt("Ender password to delete account");
     const profile = JSON.parse(window.localStorage.getItem("workUpTalent"));
-
-    if (confirmPassword === "" || confirmPassword === undefined) return;
+    if (confirmPassword === "" || confirmPassword === null) return;
     if (confirmPassword !== profile.password) {
       return showNotification({
         header: "Action denied",
@@ -469,11 +486,13 @@ document
         talent.owner === kit.defaultAccount &&
         talent.password === confirmPassword
       ) {
+        //run delete account function
         deleteTalent(i);
       }
     });
   });
 
+// delete account function
 async function deleteTalent(index) {
   try {
     await contract.methods
