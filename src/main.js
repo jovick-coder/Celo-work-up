@@ -448,7 +448,26 @@ document
         description: "Confirm Password do not match profile password",
       });
     }
-    return;
+    talentList.forEach((talent, i) => {
+      if (
+        talent.owner === kit.defaultAccount &&
+        talent.password === confirmPassword
+      ) {
+        deleteTalent(i);
+      }
+    });
+  });
+
+async function deleteTalent(index) {
+  try {
+    await contract.methods
+      .deleteProfile(index)
+      .send({ from: kit.defaultAccount });
+  } catch (error) {
+    console.log(error);
+  } finally {
     handelLogout();
     localStorage.removeItem("workUpTalent");
-  });
+    getTalentList();
+  }
+}
