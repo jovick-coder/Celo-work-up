@@ -20,78 +20,6 @@
         "type": "uint256"
       }
     ],
-    "name": "getTalentList",
-    "outputs": [
-      {
-        "internalType": "address payable",
-        "name": "a",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "b",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "c",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "d",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "e",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "f",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "g",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "h",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "i",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getTalentListLength",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      }
-    ],
     "name": "hireTalent",
     "outputs": [],
     "stateMutability": "payable",
@@ -130,6 +58,11 @@
         "type": "string"
       },
       {
+        "internalType": "string",
+        "name": "_date",
+        "type": "string"
+      },
+      {
         "internalType": "uint256",
         "name": "_price",
         "type": "uint256"
@@ -138,6 +71,83 @@
     "name": "registerTalent",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTalentList",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "a",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "b",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "c",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "d",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "e",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "f",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "g",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "h",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "i",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "j",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTalentListLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

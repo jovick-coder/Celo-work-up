@@ -5,7 +5,7 @@ import CELOWORKUP from "../contract/celoWorkUp.abi.json";
 import IERC from "../contract/IERC.abi.json";
 
 const ERC20_DECIMALS = 18;
-const contractAddress = "0xB9c254325C662a7C7c26C746e2D3A6C554B7a021";
+const contractAddress = "0x4EbC9873769e6A54C2D7cf465C56C2Dad96C4C6B";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
