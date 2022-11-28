@@ -82,8 +82,9 @@ const getTalentList = async function () {
         skills: talent[4],
         description: talent[5],
         password: talent[6],
-        price: new BigNumber(talent[7]),
-        hireCount: talent[8],
+        date: talent[7],
+        price: new BigNumber(talent[8]),
+        hireCount: talent[9],
       });
     });
     _talentList.push(_talent);
@@ -278,8 +279,8 @@ function handelRegistrationFormSubmission(e) {
     formElement[5].value,
     formElement[6].value,
     formElement[7].value,
-    formElement[3].value,
     dateFunction(),
+    formElement[3].value,
   ];
   saveNewTalent(newTalent);
 }

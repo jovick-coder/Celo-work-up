@@ -6,7 +6,6 @@ interface IERC20Token {
     function transfer(address, uint256) external returns (bool);
 
     function approve(address, uint256) external returns (bool);
-
     function transferFrom(
         address,
         address,
@@ -40,6 +39,7 @@ contract celoWorkUp {
         string skills;
         string description;
         string password;
+        string date;
         uint256 price;
         uint256 hireCount;
     }
@@ -54,6 +54,7 @@ contract celoWorkUp {
         string memory _skills,
         string memory _description,
         string memory _password,
+        string memory _date,
         uint256 _price
     ) public {
         uint256 _hireCount = 0;
@@ -65,6 +66,7 @@ contract celoWorkUp {
             _skills,
             _description,
             _password,
+            _date,
             _price,
             _hireCount
         );
@@ -83,8 +85,9 @@ contract celoWorkUp {
             string memory e,
             string memory f,
             string memory g,
-            uint256 h,
-            uint256 i
+            string memory h,
+            uint256 i,
+            uint256 j
         )
     {
         a = talentList[_index].owner;
@@ -94,8 +97,9 @@ contract celoWorkUp {
         e = talentList[_index].skills;
         f = talentList[_index].description;
         g = talentList[_index].password;
-        h = talentList[_index].price;
-        i = talentList[_index].hireCount;
+        h = talentList[_index].date;
+        i = talentList[_index].price;
+        j = talentList[_index].hireCount;
     }
 
     //Function to hire talent
