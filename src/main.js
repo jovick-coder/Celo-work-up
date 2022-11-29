@@ -133,13 +133,11 @@ function openPage(pageId) {
 
 // map talents to DOM
 function mapTalent(talentArray) {
-  // console.log();
-  console.log(talentArray);
 
   talentListDiv.innerHTML = "";
   document.querySelector(".loading-screen").style.display = "none";
   if (talentArray.length === 0) {
-    return (talentListDiv.innerHTML += `
+    return (talentListDiv.innerHTML = `
  <h3 class='text-center text-lg py-20'> No Talent Found</h3>
  `);
   }
@@ -210,7 +208,7 @@ function mapTalent(talentArray) {
 
 // hire talent function
 async function hireTalent(index) {
-  console.log(`ID${index}`, talentList[index]);
+  // console.log(`ID${index}`, talentList[index]);
   const talent = talentList[index];
   showNotification({
     header: `Precessing Hire Talent ${talent.name}`,
@@ -531,3 +529,48 @@ async function deleteTalent(index) {
     getTalentList();
   }
 }
+
+document.querySelector(".search-form").addEventListener("submit", e=>{
+e.preventDefault()
+const searchInput = e.target[0].value.toLowerCase()
+const searchResult = []
+if (searchInput === "") return
+
+talentList.map(talent =>{
+  if( 
+    talent.name.toLowerCase().includes(searchInput) || 
+    talent.skills.toLowerCase().includes(searchInput)|| 
+    talent.description.toLowerCase().includes(searchInput)
+    ){
+searchResult.push(talent)
+  }
+})
+
+// on search hide search button and show cancel button
+e.target[1].style.display = "none"
+e.target[2].style.display = "block"
+
+e.target[2].addEventListener("click", () =>{
+// on search cancel hide cancel button  and show search button
+  e.target[0].value = ""
+  e.target[1].style.display = "block"
+  e.target[2].style.display = "none"
+  
+  mapTalent(talentList)
+})
+
+ e.target[0].addEventListener("input", () =>{
+// on input change hide cancel button  and show search button
+  e.target[1].style.display = "block"
+  e.target[2].style.display = "none"
+  
+})
+
+if (searchResult.length === 0){
+ return (talentListDiv.innerHTML = `
+ <h3 class='text-center text-lg py-20'> No Talent Found from Search </h3>
+ `);
+}
+
+mapTalent(searchResult)
+})
