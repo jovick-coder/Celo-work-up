@@ -134,6 +134,8 @@ function openPage(pageId) {
 // map talents to DOM
 function mapTalent(talentArray) {
   // console.log();
+  console.log(talentArray);
+
   talentListDiv.innerHTML = "";
   document.querySelector(".loading-screen").style.display = "none";
   if (talentArray.length === 0) {
@@ -309,28 +311,39 @@ function handelRegistrationFormSubmission(e) {
     });
   }
 
-  // const newTalent = {
-  //   address: formElement[0].value,
-  //   name: formElement[1].value,
-  //   priceType: formElement[2].value,
-  //   level: formElement[4].value,
-  //   skills: formElement[5].value,
-  //   description: formElement[6].value,
-  //   password: formElement[7].value,
-  //   price: formElement[3].value,
-  //   // date: dateFunction(),
-  // };
-  const newTalent = [
-    formElement[1].value,
-    formElement[2].value,
-    formElement[4].value,
-    formElement[5].value,
-    formElement[6].value,
-    formElement[7].value,
-    dateFunction(),
-    formElement[3].value,
-  ];
-  saveNewTalent(newTalent);
+  // check for account duplicate
+  talentList.forEach((talent) => {
+    if (talent.owner === kit.defaultAccount) {
+      return showNotification({
+        header: "Registration Error",
+        description:
+          "Account duplicate detected, try login your previous account",
+      });
+    }
+
+    // const newTalent = {
+    //   address: formElement[0].value,
+    //   name: formElement[1].value,
+    //   priceType: formElement[2].value,
+    //   level: formElement[4].value,
+    //   skills: formElement[5].value,
+    //   description: formElement[6].value,
+    //   password: formElement[7].value,
+    //   // date: dateFunction(),
+    //   price: formElement[3].value,
+    // };
+    const newTalent = [
+      formElement[1].value,
+      formElement[2].value,
+      formElement[4].value,
+      formElement[5].value,
+      formElement[6].value,
+      formElement[7].value,
+      dateFunction(),
+      formElement[3].value,
+    ];
+    saveNewTalent(newTalent);
+  });
 }
 
 // get current date function
