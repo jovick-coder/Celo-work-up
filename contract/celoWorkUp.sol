@@ -46,6 +46,8 @@ contract celoWorkUp {
 
     mapping(uint256 => Talent) private talentList;
 
+    mapping(address => bool) private registered;
+
     enum Experience {
         UNDEFINED,
         ENTRY,
@@ -81,6 +83,7 @@ contract celoWorkUp {
         string calldata _date,
         uint256 _price
     ) external {
+        require(!registered[msg.sender]);
         require(_experience != Experience.UNDEFINED && _profession != Profession.UNDEFINED);
         require(bytes(_name).length > 0);
         require(bytes(_description).length > 0);
@@ -98,6 +101,7 @@ contract celoWorkUp {
         currentTalent.password = _password;
         currentTalent.date = _date;
         currentTalent.price = _price;
+        registered[msg.sender] = true;
         talentListLength++;
     }
 
@@ -141,6 +145,7 @@ contract celoWorkUp {
         talentList[_index] = talentList[talentListLength - 1];
         delete talentList[talentListLength - 1];
         talentListLength--;
+        registered[msg.sender] = false;
     }
 
     //Function to get total talent
