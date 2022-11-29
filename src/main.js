@@ -5,7 +5,7 @@ import CELOWORKUP from "../contract/celoWorkUp.abi.json";
 import IERC from "../contract/IERC.abi.json";
 
 const ERC20_DECIMALS = 18;
-const contractAddress = "0x4EbC9873769e6A54C2D7cf465C56C2Dad96C4C6B";
+const contractAddress = "0xa0a85f0284d6260CDB4B26C50E4B158d8D3E7398";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
@@ -100,14 +100,13 @@ const getTalentList = async function () {
       resolve({
         owner: talent[0],
         name: talent[1],
-        priceType: talent[2],
-        level: talent[3],
-        skills: talent[4],
-        description: talent[5],
-        password: talent[6],
-        date: talent[7],
-        price: new BigNumber(talent[8]),
-        hireCount: talent[9],
+        level: Number(talent[2]),
+        skills: Number(talent[3]),
+        description: talent[4],
+        password: talent[5],
+        date: talent[6],
+        price: new BigNumber(talent[7]),
+        hireCount: talent[8],
       });
     });
     _talentList.push(_talent);
@@ -147,7 +146,6 @@ function mapTalent(talentArray) {
       name,
       skills,
       description,
-      priceType,
       level,
       price,
       date,
@@ -162,7 +160,7 @@ function mapTalent(talentArray) {
               <button
               class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button float-end"
               >
-                Hire for $${price}
+                Hire for $${price.shiftedBy(-ERC20_DECIMALS).toFixed(2)}
               </button>
             `;
 
@@ -174,14 +172,13 @@ function mapTalent(talentArray) {
             >
               <div class="mb-8">
                 <div class="text-gray-900 font-bold text-xl">${name}</div>
-                <div class="text-gray-900 font-bold">${skills}</div>
+                <div class="text-gray-900 font-bold">${skills === 1? "Frontend": skills === 2? "Backend" : "Fullstack"} Developer</div>
                   <p class="text-gray-700 text-base pt-0 pb-0">
                     <span class="text-black">Hired</span>
                     ${hireCount} times
                   </p>
                   <p class="text-gray-700 text-base pt-5 pb-2">
-                    <span class="text-black">${priceType} Price-</span>
-                    ${level} -Est budget $${price}
+                    ${level === 1? "Entry": level === 2? "Mid" : "Senior"} Level -Est budget $${price.shiftedBy(-ERC20_DECIMALS).toFixed(2)}
                   </p>
                   <p class="text-gray-700 text-base">${description}</p>
                 </div>
@@ -212,7 +209,7 @@ async function hireTalent(index) {
   const talent = talentList[index];
   showNotification({
     header: `Precessing Hire Talent ${talent.name}`,
-    description: `Talent ${talent.name} is hired for ${talent.price}`,
+    description: `Talent ${talent.name} is hired for ${price.shiftedBy(-ERC20_DECIMALS).toFixed(2)}`,
   });
   try {
     await approve(talentList[index].price);
@@ -271,6 +268,7 @@ function handelRegistrationFormSubmission(e) {
   e.preventDefault();
 
   const formElement = e.target;
+
   // form error handling
   if (formElement[0].value === "") {
     return showNotification({
@@ -287,73 +285,74 @@ function handelRegistrationFormSubmission(e) {
   if (formElement[2].value === "") {
     return showNotification({
       header: "Form Error",
-      description: "Please Select a Price before submission",
+      description: "Please enter a Price value before submission",
     });
   }
   if (formElement[3].value === "") {
     return showNotification({
       header: "Form Error",
-      description: "Please enter a Price value before submission",
+      description: "Please Select a Level before submission",
     });
   }
   if (formElement[4].value === "") {
     return showNotification({
       header: "Form Error",
-      description: "Please Select a Level before submission",
+      description: "Please Select a Skill before submission",
     });
   }
   if (formElement[5].value === "") {
     return showNotification({
       header: "Form Error",
-      description: "Please Select a Skill before submission",
-    });
-  }
-  if (formElement[6].value === "") {
-    return showNotification({
-      header: "Form Error",
       description: "Please enter a Description value before submission",
     });
   }
-  if (formElement[7].value === "") {
+  if (formElement[6].value === "") {
     return showNotification({
       header: "Form Error",
       description: "Please enter a Password value before submission",
     });
   }
 
-  // check for account duplicate
-  talentList.forEach((talent) => {
-    if (talent.owner === kit.defaultAccount) {
-      return showNotification({
-        header: "Registration Error",
-        description:
-          "Account duplicate detected, try login your previous account",
-      });
-    }
+  if(talentList.length > 0){
+    let duplicate = false;
+        // check for account duplicate
+    talentList.forEach((talent) => {
+      if (talent.owner === kit.defaultAccount) {
+        duplicate = true;
+        return showNotification({
+          header: "Registration Error",
+          description:
+            "Account duplicate detected, try login your previous account",
+        });
+      }
 
-    // const newTalent = {
+    });
+    if(duplicate) return;
+  }
+      // const newTalent = {
     //   address: formElement[0].value,
     //   name: formElement[1].value,
-    //   priceType: formElement[2].value,
-    //   level: formElement[4].value,
-    //   skills: formElement[5].value,
-    //   description: formElement[6].value,
-    //   password: formElement[7].value,
+    //   level: formElement[3].value,
+    //   skills: formElement[4].value,
+    //   description: formElement[5].value,
+    //   password: formElement[6].value,
     //   // date: dateFunction(),
-    //   price: formElement[3].value,
+    //   price: formElement[2].value,
     // };
     const newTalent = [
       formElement[1].value,
-      formElement[2].value,
-      formElement[4].value,
+      Number(formElement[3].value),
+      Number(formElement[4].value),
       formElement[5].value,
       formElement[6].value,
-      formElement[7].value,
       dateFunction(),
-      formElement[3].value,
+      new BigNumber(formElement[2].value)
+      .shiftedBy(ERC20_DECIMALS)
+      .toString(),
     ];
+
     saveNewTalent(newTalent);
-  });
+
 }
 
 // get current date function
@@ -534,15 +533,16 @@ document.querySelector(".search-form").addEventListener("submit", e=>{
 e.preventDefault()
 const searchInput = e.target[0].value.toLowerCase()
 const searchResult = []
-if (searchInput === "") return
 
 talentList.map(talent =>{
   if( 
-    talent.name.toLowerCase().includes(searchInput) || 
-    talent.skills.toLowerCase().includes(searchInput)|| 
+    talent.name.toLowerCase().includes(searchInput) ||  
     talent.description.toLowerCase().includes(searchInput)
     ){
 searchResult.push(talent)
+  }
+  if(!searchResult.length){
+    searchResult = talentList;
   }
 })
 
