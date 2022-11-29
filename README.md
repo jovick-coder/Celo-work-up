@@ -25,6 +25,7 @@ celo work up is a freelancers platform where job seekers will register and get t
 ➡️ Html <br />
 ➡️ JavaScript ES6 <br />
 ➡️ Tailwind CSS <br />
+➡️ Solidity <br />
 ➡️ Web 3 <br />
 ➡️ celo/contractkit <br />
 ➡️ bignumber <br />
