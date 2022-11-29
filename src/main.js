@@ -145,6 +145,7 @@ function mapTalent(talentArray) {
   }
   talentArray.map((talent, id) => {
     const {
+      owner,
       name,
       skills,
       description,
@@ -154,38 +155,49 @@ function mapTalent(talentArray) {
       date,
       hireCount,
     } = talent;
-    const cardComponent = `
-                        <div class="w-full py-12 lg:flex border border-gray-200" id="${id}">
-                          <div
-                          class="lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal px-8 w-full"
-                          >
-                            <div class="mb-8">
-                              <div class="text-gray-900 font-bold text-xl">${name}</div>
-                              <div class="text-gray-900 font-bold">${skills}</div>
-                                <p class="text-gray-700 text-base pt-0 pb-0">
-                                  <span class="text-black">Hired</span>
-                                  ${hireCount} times
-                                </p>
-                                <p class="text-gray-700 text-base pt-5 pb-2">
-                                  <span class="text-black">${priceType} Price-</span>
-                                  ${level} -Est budget $${price}
-                                </p>
-                                <p class="text-gray-700 text-base">${description}</p>
-                              </div>
-                              <div class="flex items-center">
-                                <div class="text-sm">
-                                  <p class="text-gray-600">${date}</p>
-                                </div>
-                                <button
-                                class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button float-end"
-                                >
-                                  Hire for $${price}
-                                </button>
-                            </div>
-                          </div>
-                        </div>
-                  `;
 
+    // conditionally generate button component
+    const buttonComponent =
+      owner === kit.defaultAccount
+        ? `<div  class="text-green-600 ml-auto float-end">owner</div>`
+        : `                          
+              <button
+              class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button float-end"
+              >
+                Hire for $${price}
+              </button>
+            `;
+
+    // generate card component
+    const cardComponent = `
+          <div class="w-full py-12 lg:flex border border-gray-200" id="${id}">
+            <div
+            class="lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal px-8 w-full"
+            >
+              <div class="mb-8">
+                <div class="text-gray-900 font-bold text-xl">${name}</div>
+                <div class="text-gray-900 font-bold">${skills}</div>
+                  <p class="text-gray-700 text-base pt-0 pb-0">
+                    <span class="text-black">Hired</span>
+                    ${hireCount} times
+                  </p>
+                  <p class="text-gray-700 text-base pt-5 pb-2">
+                    <span class="text-black">${priceType} Price-</span>
+                    ${level} -Est budget $${price}
+                  </p>
+                  <p class="text-gray-700 text-base">${description}</p>
+                </div>
+                <div class="flex items-center">
+                  <div class="text-sm">
+                    <p class="text-gray-600">${date}</p>
+                  </div>
+                  ${buttonComponent}
+              </div>
+            </div>
+          </div>
+         `;
+
+    //  render card component
     return (talentListDiv.innerHTML += cardComponent);
   });
 
