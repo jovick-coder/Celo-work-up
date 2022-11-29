@@ -4,7 +4,7 @@
 
 celo work up is a freelancers platform where job seekers will register and get their profile out their to be seen by companies looking for employees, this is a project imitating #Upwork in UI design.
 
-[Project Demo URL](celo-work-up.netlify.app)
+[Project Demo URL](https://celo-work-up.netlify.app)
 ## 📄 Pages
 
 ➡️ Registration <br />
