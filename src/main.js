@@ -484,6 +484,7 @@ function handelLogout() {
     return;
   }
   window.localStorage.setItem("workUpTalentLogin", false);
+  localStorage.removeItem("workUpTalent");
   navLinks[1].style.display = "block";
   navLinks[2].style.display = "block";
   navLinks[3].style.display = "none";
@@ -517,6 +518,7 @@ document
 
 // delete account function
 async function deleteTalent(index) {
+  handelLogout();
   try {
     await contract.methods
       .deleteProfile(index)
@@ -524,8 +526,6 @@ async function deleteTalent(index) {
   } catch (error) {
     console.log(error);
   } finally {
-    handelLogout();
-    localStorage.removeItem("workUpTalent");
     getTalentList();
   }
 }
@@ -550,8 +550,8 @@ searchResult.push(talent)
 e.target[1].style.display = "none"
 e.target[2].style.display = "block"
 
-e.target[2].addEventListener("click", () =>{
 // on search cancel hide cancel button  and show search button
+e.target[2].addEventListener("click", () =>{
   e.target[0].value = ""
   e.target[1].style.display = "block"
   e.target[2].style.display = "none"
@@ -559,8 +559,8 @@ e.target[2].addEventListener("click", () =>{
   mapTalent(talentList)
 })
 
- e.target[0].addEventListener("input", () =>{
 // on input change hide cancel button  and show search button
+ e.target[0].addEventListener("input", () =>{
   e.target[1].style.display = "block"
   e.target[2].style.display = "none"
   
