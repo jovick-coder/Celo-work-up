@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>WorkUp clone</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css"
+    />
+    <link
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <nav>
+      <div class="h-16 shadow-2xl border-solid border-b-2 mx-auto flex">
+        <div class="container mx-auto flex justify-between items-center">
+          <div class="lg:w-1/4 mt-4">
+            <p class="flex justify-end mr-3 mb-1 text-xl font-black pl-16">
+              Work<span class="text-green-600">Up</span>
+            </p>
+          </div>
+          <div class="flex w-2/4 mx-auto">
+            <ul class="flex nav-link-ul ml-auto">
+              <li class="cursor-pointer text-green-600 m-2">Hire Talents</li>
+              <li class="cursor-pointer m-2">Register</li>
+              <li class="cursor-pointer m-2">Login</li>
+              <li class="cursor-pointer m-2" style="display: none">Profile</li>
+              <div
+                class="nav-link-ul my-auto mr-1 ml-3 cursor-pointer bg-green-600 text-white p-2 rounded-full px-4 mx-auto"
+                id="balance"
+              >
+                ... cUSD
+              </div>
+              <button
+                class="flex-no-shrink bg-red-500 px-5 py-2 text-sm shadow-sm mx-auto hover:shadow-lg font-medium tracking-wider border-2 border-red-500 text-white rounded-full"
+                id="logout-button"
+                style="display: none"
+              >
+                Logout
+              </button>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div
+      class="loading-screen absolute w-screen h-screen justify-center flex items-center bg-white text-xl z-10"
+    >
+      Loading...
+    </div>
+
+    <div
+      class="flex flex-col p-8 max-w-md w-full mx-auto fixed top-10 right-0 bg-white shadow-md hover:shodow-lg rounded-2xl notification z-20"
+      style="display: none"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-16 h-16 rounded-2xl p-3 border border-blue-100 text-blue-400 bg-blue-50"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <div class="flex flex-col ml-3">
+            <div class="font-medium leading-none header">
+              Notification Header
+            </div>
+            <p class="text-sm text-gray-600 leading-none mt-1 description">
+              Notification description
+            </p>
+          </div>
+        </div>
+        <button
+          class="flex-no-shrink bg-red-500 px-5 ml-4 py-2 text-sm shadow-sm hover:shadow-lg font-medium tracking-wider border-2 border-red-500 text-white rounded-full"
+          id="notification-close"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+    <section id="jobs-section">
+      <div class="bg-gray-200 h-full">
+        <div class="container mx-auto">
+          <div class="p-8">
+            <div class="rounded bg-white shadow-lg lg:mx-24">
+              <div class="flex justify-items-start h-16">
+                <ul class="flex ml-5 pl-5 mt-8">
+                  <li>
+                    <a
+                      href="#"
+                      class="text-green-600 border-b-4 border-solid border-green-600"
+                      >Search</a
+                    >
+                  </li>
+                  <!-- <li class="ml-4"><a href="#">Saved Jobs</a></li> -->
+                </ul>
+              </div>
+              <div
+                class="bg-gray-200 py-12 border-solid border-gray-300 border-2"
+              >
+                <div class="flex">
+                  <div class="w-3/4 pl-8">
+                    <form
+                      class="flex flex-row border border-gray-100 rounded w-full search-form"
+                    >
+                      <input
+                        class="pl-3 h-10 appearance-none block w-full text-gray-700 leading-tight focus:outline"
+                        type="text"
+                        placeholder="Search for jobs"
+                      />
+                      <button class="bg-green-600 w-10">
+                        <i class="fa fa-search text-white"></i>
+                      </button>
+                      <button class="bg-red-600 w-10" style="display: none;">
+                        <i class="fa fa-x text-white">X</i>
+                      </button>
+                    </form>
+                  </div>
+                  <div class="hidden lg:flex w-1/4 ml-5">
+                    <button
+                      class="bg-white text-green-600 font-semibold py-2 px-4 border border-grey-500 hover:shadow-xl rounded"
+                    >
+                      <i class="fa fa-filter"></i> Filters
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!--Jobs card-->
+
+              <div id="talent-list">
+ 
+              </div>
+              <!--pagination-->
+              <div
+                class="bg-gray-200 py-12 border-solid border-gray-300 border-2"
+              >
+                <div class="flex lg:justify-between"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-10"></div>
+      </div>
+    </section>
+    <!-- register -->
+    <section id="register-section">
+      <div class="bg-gray-200 h-full">
+        <div class="container mx-auto">
+          <div class="p-8">
+            <div class="rounded bg-white shadow-lg lg:mx-24">
+              <div class="flex justify-items-start h-16">
+                <h1 class="my-auto text-lg ml-5 font-weight-900">Register</h1>
+              </div>
+              <div
+                class="bg-gray-200 py-12 border-solid border-gray-300 border-2"
+              >
+                <div class="flex">
+                  <div class="w-3/4 mx-auto pl-8">
+                    <form class="flex flex-col w-full" id="registration-form">
+                      <sub class="pl-3">Wallet address</sub>
+                      <input
+                        class="my-4 pl-3 h-10 appearance-none block w-full text-gray-700 leading-tight focus:outline wallet-address-input"
+                        type="text"
+                        value="34tygf6567Xhklnkmddweda"
+                        disabled
+                      />
+                      <input
+                        class="my-4 pl-3 h-10 appearance-none block w-full text-gray-700 leading-tight focus:outline"
+                        type="text"
+                        placeholder="Name"
+                      />
+                      <div class="flex">
+                        <select
+                          name=""
+                          id=""
+                          class="my-4 pl-3 mr-1 pr-10 h-10 block w-full text-gray-700 leading-tight focus:outline"
+                        >
+                          <option value="">Select Price Type...</option>
+                          <option value="Fixed">Fixed Price</option>
+                        </select>
+                        <input
+                          class="my-4 pl-3 ml-1 h-10 appearance-none block w-full text-gray-700 leading-tight focus:outline"
+                          type="number"
+                          placeholder="Price"
+                        />
+                      </div>
+                      <div class="flex">
+                        <select
+                          name=""
+                          id=""
+                          class="my-4 pl-3 mr-1 pr-10 h-10 block w-full text-gray-700 leading-tight focus:outline"
+                        >
+                          <option value="">Select Level...</option>
+                          <option value="Entry level">Entry level</option>
+                          <option value="Intermediate level">Intermediate level</option>
+                          <option value="Senior level">Senior developer</option>
+                        </select>
+                        <select
+                          name=""
+                          id=""
+                          class="my-4 pl-3 ml-1 pr-10 h-10 block w-full text-gray-700 leading-tight focus:outline"
+                        >
+                          <option value="">Select skill...</option>
+                          <option value="FrontEnd Developer">
+                            FrontEnd Developer
+                          </option>
+                          <option value="BackEnd Developer">
+                            BackEnd Developer
+                          </option>
+                          <option value="FullStack Developer">
+                            FullStack Developer
+                          </option>
+                        </select>
+                      </div>
+
+                      <textarea
+                        placeholder="Description"
+                        class="my-4 p-3 h-32 appearance-none block w-full text-gray-700 leading-tight focus:outline"
+                      ></textarea>
+                      <input
+                        class="my-4 pl-3 h-10 appearance-none block w-full text-gray-700 leading-tight focus:outline"
+                        type="password"
+                        placeholder="Password"
+                      />
+                      <button
+                        class="border-soild bg-white bg-gray-300 border-white-300 py-2 shadow text-gray-700"
+                      >
+                        Register
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- login -->
+    <section>
+      <div class="bg-gray-200 h-full">
+        <div class="container mx-auto">
+          <div class="p-8">
+            <div class="rounded bg-white shadow-lg lg:mx-24">
+              <div class="flex justify-items-start h-16">
+                <h1 class="my-auto text-lg ml-5 font-weight-900">Login</h1>
+              </div>
+              <div
+                class="bg-gray-200 py-12 border-solid border-gray-300 border-2"
+              >
+                <div class="flex">
+                  <div class="w-3/4 mx-auto pl-8">
+                    <form class="flex flex-col w-full" id="login-form">
+                      <sub class="pl-3">Wallet address</sub>
+                      <input
+                        class="my-4 pl-3 h-10 appearance-none block w-full text-gray-700 leading-tight focus:outline wallet-address-input"
+                        type="text"
+                        value="34tygf6567Xhklnkmddweda"
+                        disabled
+                      />
+                      <input
+                        class="my-4 pl-3 h-10 appearance-none block w-full text-gray-700 leading-tight focus:outline"
+                        type="password"
+                        placeholder="Password"
+                      />
+                      <button
+                        class="border-soild bg-white bg-gray-300 border-white-300 py-2 shadow text-gray-700"
+                      >
+                        Login
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Profile -->
+    <section>
+      <div class="bg-gray-200 h-full">
+        <div class="container mx-auto">
+          <div class="p-8">
+            <div class="rounded bg-white shadow-lg lg:mx-24">
+              <div class="flex justify-items-start h-16">
+                <h1 class="my-auto text-lg ml-5 font-weight-900">Profile</h1>
+              </div>
+              <div
+                class="bg-gray-200 py-12 border-solid border-gray-300 border-2"
+              >
+                <div class="flex">
+                  <div class="w-3/4 mx-auto pl-8 flex">
+                    <ul>
+                      <li class="p-3 pr-8 border"><b>Address:</b></li>
+                      <li class="p-3 pr-8 border"><b>Name:</b></li>
+                      <li class="p-3 pr-8 border"><b>Skills:</b></li>
+                      <li class="p-3 pr-8 border"><b>Description:</b></li>
+                      <li class="p-3 pr-8 border"><b>PriceType:</b></li>
+                      <li class="p-3 pr-8 border"><b>Level:</b></li>
+                      <li class="p-3 pr-8 border"><b>Price:</b></li>
+                      <li class="p-3 pr-8 border"><b>Hired:</b></li>
+                      <li class="p-3 pr-8 border"><b>Data:</b></li>
+                    </ul>
+                    <div class="w-full" id="profile-information">
+                      <div class="p-3 pl-8 border"></div>
+                      <div class="p-3 pl-8 border"></div>
+                      <div class="p-3 pl-8 border"></div>
+                      <div class="p-3 pl-8 border"></div>
+                      <div class="p-3 pl-8 border"></div>
+                      <div class="p-3 pl-8 border"></div>
+                      <div class="p-3 pl-8 border"></div>
+                      <div class="p-3 pl-8 border"></div>
+                      <div class="p-3 pl-8 border"></div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="flex-no-shrink bg-red-500 px-5 ml-20 mt-20 py-2 text-sm shadow-sm hover:shadow-lg font-medium tracking-wider border-2 border-red-500 text-white rounded-full"
+                  id="delete-account-button"
+                >
+                  Delete account
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--footer-->
+    <div class="h-auto bg-blue-800">
+      <div
+        class="lg:flex md:flex pl-3 lg:p-16 md:p-16 lg:mx-auto lg:container lg:text-center"
+      >
+        <div class="py-4 lg:w-1/4 md:w-1/4">
+          <ul class="text-left lg:pl-20 md:px-5">
+            <li class="text-white"><a href="#">About us</a></li>
+            <li class="text-white"><a href="#">Feedback</a></li>
+            <li class="text-white"><a href="#">Community</a></li>
+          </ul>
+        </div>
+        <div class="py-4 lg:w-1/4 md:w-1/4">
+          <ul class="text-left md:px-5">
+            <li class="text-white"><a href="#">Trust, Safety & Security</a></li>
+            <li class="text-white"><a href="#">Help & Support</a></li>
+            <li class="text-white"><a href="#">WorkUp Foundation</a></li>
+          </ul>
+        </div>
+        <div class="py-4 lg:w-1/4 md:w-1/4">
+          <ul class="text-left md:px-5">
+            <li class="text-white"><a href="#">Terms of Service</a></li>
+            <li class="text-white"><a href="#">Privacy Policy</a></li>
+            <li class="text-white"><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+        <div class="py-4 lg:w-1/4 md:w-1/4">
+          <ul class="text-left md:px-5">
+            <li class="text-white"><a href="#">Desktop App</a></li>
+            <li class="text-white"><a href="#">Cookie Policy</a></li>
+            <li class="text-white"><a href="#">Enterprise Solutions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="py-3 lg:flex md:flex pl-3 md:pl-0 lg:pl-16 lg:mx-auto md:mx-auto lg:container md:container lg:text-center lg:justify-between md:justify-between"
+      >
+        <div class="lg:flex md:flex mt-2 lg:m-0 md:m-0">
+          <p class="text-white lg:pl-20 pt-2">Follow us</p>
+          <div class="flex">
+            <div
+              class="h-10 w-10 rounded-full bg-gray-700 mr-1 lg:mx-2 md:mx-2"
+            >
+              <i class="fa fa-facebook text-white p-3"></i>
+            </div>
+            <div class="h-10 w-10 rounded-full bg-gray-700 mx-1">
+              <i class="fa fa-linkedin text-white p-3"></i>
+            </div>
+            <div class="h-10 w-10 rounded-full bg-gray-700 mx-1">
+              <i class="fa fa-twitter text-white p-3"></i>
+            </div>
+            <div class="h-10 w-10 rounded-full bg-gray-700 mx-1">
+              <i class="fa fa-youtube text-white p-3"></i>
+            </div>
+            <div class="h-10 w-10 rounded-full bg-gray-700 mx-1">
+              <i class="fa fa-instagram text-white p-3"></i>
+            </div>
+          </div>
+        </div>
+        <div class="lg:flex md:flex mt-2 lg:m-0 md:m-0 lg:pr-40">
+          <p class="text-white md:pl-5 pt-2">Mobile App</p>
+          <div class="flex">
+            <div
+              class="h-10 w-10 rounded-full bg-gray-700 mr-1 lg:mx-2 md:mx-2"
+            >
+              <i class="fa fa-android text-white p-3"></i>
+            </div>
+            <div class="h-10 w-10 rounded-full bg-gray-700 mx-1">
+              <i class="fa fa-apple text-white p-3"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="text-white py-5 text-center">
+          © 2015 - 2020 WorkUp® Global Inc.
+        </p>
+      </div>
+    </div>
+    <!-- <script src="../src/main.js"></script> -->
+
+    <script></script>
+  <script type="text/javascript" src="main.js"></script></body>
+</html>
