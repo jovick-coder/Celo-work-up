@@ -220,7 +220,7 @@ async function hireTalent(index) {
 	const talent = talentList[index];
 	showNotification({
 		header: `Precessing Hire Talent ${talent.name}`,
-		description: `Talent ${talent.name} is hired for ${price
+		description: `Talent ${talent.name} is hired for ${talent.price
 			.shiftedBy(-ERC20_DECIMALS)
 			.toFixed(2)}`,
 	});
