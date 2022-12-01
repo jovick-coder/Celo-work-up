@@ -6,6 +6,7 @@ interface IERC20Token {
     function transfer(address, uint256) external returns (bool);
 
     function approve(address, uint256) external returns (bool);
+
     function transferFrom(
         address,
         address,
@@ -34,9 +35,8 @@ contract celoWorkUp {
     struct Talent {
         address payable owner;
         string name;
-        string priceType;
-        string level;
-        string skills;
+        Experience experience;
+        Profession profession;
         string description;
         string password;
         string date;
@@ -44,78 +44,99 @@ contract celoWorkUp {
         uint256 hireCount;
     }
 
-    mapping(uint256 => Talent) internal talentList;
+    mapping(uint256 => Talent) private talentList;
 
-    //Function to register talent
+    mapping(address => bool) private registered;
+
+    enum Experience {
+        UNDEFINED,
+        ENTRY,
+        MID,
+        SENIOR
+    }
+
+    enum Profession {
+        UNDEFINED,
+        FRONTEND,
+        BACKEND,
+        FULLSTACK
+    }
+
+    /**
+        * @notice allow users to register as a talent
+        * @dev Transaction reverts if the invalid input data is entered
+        * @param _name Name of Talent
+        * @param _experience Experience level of Talent
+        * @param _profession Profession of Talent
+        * @param _description Description of Talent/services provided
+        * @param _password encrypted password of Talent
+        * @param _date The registered date for Talent
+        * @param _price Cost to hire talent
+
+     */
     function registerTalent(
-        string memory _name,
-        string memory _priceType,
-        string memory _level,
-        string memory _skills,
-        string memory _description,
-        string memory _password,
-        string memory _date,
+        string calldata _name,
+        Experience _experience,
+        Profession _profession,
+        string calldata _description,
+        string calldata _password,
+        string calldata _date,
         uint256 _price
-    ) public {
-        uint256 _hireCount = 0;
-        talentList[talentListLength] = Talent(
-            payable(msg.sender),
-            _name,
-            _priceType,
-            _level,
-            _skills,
-            _description,
-            _password,
-            _date,
-            _price,
-            _hireCount
-        );
+    ) external {
+        require(!registered[msg.sender]);
+        require(_experience != Experience.UNDEFINED && _profession != Profession.UNDEFINED);
+        require(bytes(_name).length > 0);
+        require(bytes(_description).length > 0);
+        require(bytes(_password).length > 0);
+        require(bytes(_date).length > 0);
+
+        // 1696 gas saved
+
+        Talent storage currentTalent = talentList[talentListLength];
+        currentTalent.owner = payable(msg.sender);
+        currentTalent.name = _name;
+        currentTalent.experience = _experience;
+        currentTalent.profession = _profession;
+        currentTalent.description = _description;
+        currentTalent.password = _password;
+        currentTalent.date = _date;
+        currentTalent.price = _price;
+        registered[msg.sender] = true;
         talentListLength++;
     }
 
-    //Function to get all registed talent
+    /// * @notice  Function to get all registed talent
     function getTalentList(uint256 _index)
         public
         view
         returns (
-            address payable a,
-            string memory b,
-            string memory c,
-            string memory d,
-            string memory e,
-            string memory f,
-            string memory g,
-            string memory h,
-            uint256 i,
-            uint256 j
+            Talent memory
         )
     {
-        a = talentList[_index].owner;
-        b = talentList[_index].name;
-        c = talentList[_index].priceType;
-        d = talentList[_index].level;
-        e = talentList[_index].skills;
-        f = talentList[_index].description;
-        g = talentList[_index].password;
-        h = talentList[_index].date;
-        i = talentList[_index].price;
-        j = talentList[_index].hireCount;
+        return talentList[_index];
     }
 
-    //Function to hire talent
+    /**
+        * @notice allow users to hire a talent
+     */
     function hireTalent(uint256 _index) public payable {
+        Talent storage currentTalent = talentList[_index];
+        require(currentTalent.owner != msg.sender, "You can't hire yourself");
         require(
             IERC20Token(cUsdTokenAddress).transferFrom(
                 msg.sender,
-                talentList[_index].owner,
-                talentList[_index].price
+                currentTalent.owner,
+                currentTalent.price
             ),
             "Transfer failed."
         );
-        talentList[_index].hireCount++;
+        currentTalent.hireCount++;
     }
 
-    //Function to delete talent profile
+    /**
+        * @dev deletes a Talent from the contract's state
+        * @notice allow a talent to delete their profile
+     */
     function deleteProfile(uint256 _index) external {
         require(
             msg.sender == talentList[_index].owner,
@@ -124,6 +145,7 @@ contract celoWorkUp {
         talentList[_index] = talentList[talentListLength - 1];
         delete talentList[talentListLength - 1];
         talentListLength--;
+        registered[msg.sender] = false;
     }
 
     //Function to get total talent
