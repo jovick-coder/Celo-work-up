@@ -545,7 +545,7 @@ async function deleteTalent(index) {
 document.querySelector(".search-form").addEventListener("submit", (e) => {
 	e.preventDefault();
 	const searchInput = e.target[0].value.toLowerCase();
-	const searchResult = [];
+	let searchResult = [];
 
 	talentList.map((talent) => {
 		if (
@@ -555,6 +555,7 @@ document.querySelector(".search-form").addEventListener("submit", (e) => {
 			searchResult.push(talent);
 		}
 		if (!searchResult.length) {
+			console.log(talentList);
 			searchResult = talentList;
 		}
 	});
