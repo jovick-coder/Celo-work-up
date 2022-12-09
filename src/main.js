@@ -544,18 +544,19 @@ async function deleteTalent(index) {
 
 document.querySelector(".search-form").addEventListener("submit", (e) => {
 	e.preventDefault();
-	const searchInput = e.target[0].value.toLowerCase();
+	const searchInput = e.target[0].value.toLowerCase().trim();
 	let searchResult = [];
+
+	if(searchInput.trim() === "") return
 
 	talentList.map((talent) => {
 		if (
-			talent.name.toLowerCase().includes(searchInput) ||
-			talent.description.toLowerCase().includes(searchInput)
+			talent.name.toLowerCase().trim().includes(searchInput) ||
+			talent.description.toLowerCase().trim().includes(searchInput)
 		) {
 			searchResult.push(talent);
 		}
 		if (!searchResult.length) {
-			console.log(talentList);
 			searchResult = talentList;
 		}
 	});
