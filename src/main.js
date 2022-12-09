@@ -480,11 +480,10 @@ function handelLogin() {
 	profileDivElement[1].innerHTML = profile.name;
 	profileDivElement[2].innerHTML = profile.skills;
 	profileDivElement[3].innerHTML = profile.description;
-	profileDivElement[4].innerHTML = profile.priceType;
-	profileDivElement[5].innerHTML = profile.level;
-	profileDivElement[6].innerHTML = `$${profile.price}`;
-	profileDivElement[7].innerHTML = `${profile.hireCount} times`;
-	profileDivElement[8].innerHTML = profile.date;
+	profileDivElement[4].innerHTML = profile.level;
+	profileDivElement[5].innerHTML = `$${profile.price}`;
+	profileDivElement[6].innerHTML = `${profile.hireCount} times`;
+	profileDivElement[7].innerHTML = profile.date;
 
 	openPage(0);
 }
@@ -555,9 +554,6 @@ document.querySelector(".search-form").addEventListener("submit", (e) => {
 			talent.description.toLowerCase().trim().includes(searchInput)
 		) {
 			searchResult.push(talent);
-		}
-		if (!searchResult.length) {
-			searchResult = talentList;
 		}
 	});
 
