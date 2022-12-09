@@ -389,6 +389,11 @@ function dateFunction() {
 
 // save talent profile function
 async function saveNewTalent(newTalent) {
+	
+	showNotification({
+		header: "Registration Processing",
+		description: "Account registration is processing, Account will be up in no time.",
+	});
 	try {
 		const result = await contract.methods
 			.registerTalent(...newTalent)
