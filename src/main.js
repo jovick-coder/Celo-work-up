@@ -31,7 +31,7 @@ async function approve(_price) {
 }
 function calculatePrice(amount) {
 	return amount.shiftedBy(-ERC20_DECIMALS)
-			.toFixed(2)
+		.toFixed(2)
 }
 
 // on page load
@@ -177,21 +177,19 @@ function mapTalent(talentArray) {
             >
               <div class="mb-8">
                 <div class="text-gray-900 font-bold text-xl">${name}</div>
-                <div class="text-gray-900 font-bold">${
-					skills === 1
-						? "Frontend"
-						: skills === 2
-						? "Backend"
-						: "Fullstack"
-				} Developer</div>
+                <div class="text-gray-900 font-bold">${skills === 1
+				? "Frontend"
+				: skills === 2
+					? "Backend"
+					: "Fullstack"
+			} Developer</div>
                   <p class="text-gray-700 text-base pt-0 pb-0">
                     <span class="text-black">Hired</span>
                     ${hireCount} times
                   </p>
                   <p class="text-gray-700 text-base pt-5 pb-2">
-                    ${
-						level === 1 ? "Entry" : level === 2 ? "Mid" : "Senior"
-					} Level -Est budget $${calculatePrice(price)}
+                    ${level === 1 ? "Entry" : level === 2 ? "Mid" : "Senior"
+			} Level -Est budget $${calculatePrice(price)}
                   </p>
                   <p class="text-gray-700 text-base">${description}</p>
                 </div>
@@ -387,7 +385,7 @@ function dateFunction() {
 
 // save talent profile function
 async function saveNewTalent(newTalent) {
-	
+
 	showNotification({
 		header: "Registration Processing",
 		description: "Account registration is processing, Account will be up in no time.",
@@ -475,15 +473,24 @@ function handelLogin() {
 	logoutButton.style.display = "block";
 
 	logoutButton.addEventListener("click", () => handelLogout());
+	let skills, level
 
 	// fill Profile
 	const profileDivElement = profileInformation.children;
 	const profile = JSON.parse(window.localStorage.getItem("workUpTalent"));
+
+	if (profile.skills === 1) skills = " FrontEnd Developer"
+	if (profile.skills === 2) skills = "BackEnd Developer"
+	if (profile.skills === 3) skills = " FullStack Developer"
+	if (profile.level === 1) level = " Entry level"
+	if (profile.level === 2) level = "Intermediate level"
+	if (profile.level === 3) level = "Senior developer"
+
 	profileDivElement[0].innerHTML = profile.owner;
 	profileDivElement[1].innerHTML = profile.name;
-	profileDivElement[2].innerHTML = profile.skills;
+	profileDivElement[2].innerHTML = skills;
 	profileDivElement[3].innerHTML = profile.description;
-	profileDivElement[4].innerHTML = profile.level;
+	profileDivElement[4].innerHTML = level;
 	profileDivElement[5].innerHTML = `$${profile.price / 1000000000000000000}`;
 	profileDivElement[6].innerHTML = `${profile.hireCount} times`;
 	profileDivElement[7].innerHTML = profile.date;
@@ -548,7 +555,7 @@ document.querySelector(".search-form").addEventListener("submit", (e) => {
 	const searchInput = e.target[0].value.toLowerCase().trim();
 	let searchResult = [];
 
-	if(searchInput.trim() === "") return
+	if (searchInput.trim() === "") return
 
 	talentList.map((talent) => {
 		if (
