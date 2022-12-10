@@ -29,6 +29,10 @@ async function approve(_price) {
 		.send({ from: kit.defaultAccount });
 	return result;
 }
+function calculatePrice(amount) {
+	return amount.shiftedBy(-ERC20_DECIMALS)
+			.toFixed(2)
+}
 
 // on page load
 window.addEventListener("load", async () => {
@@ -85,7 +89,7 @@ const connectCeloWallet = async function () {
 // get celo wallet balance
 const getBalance = async function () {
 	const totalBalance = await kit.getTotalBalance(kit.defaultAccount);
-	const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2);
+	const cUSDBalance = calculatePrice(totalBalance.cUSD);
 	document.querySelector("#balance").innerHTML = cUSDBalance + " <b>cUSD</b>";
 };
 
@@ -161,7 +165,7 @@ function mapTalent(talentArray) {
               <button
               class="bg-green-600 text-white p-3 mt-2 ml-auto hire-talent-button float-end"
               >
-                Hire for $${price.shiftedBy(-ERC20_DECIMALS).toFixed(2)}
+                Hire for $${calculatePrice(price)}
               </button>
             `;
 
@@ -187,9 +191,7 @@ function mapTalent(talentArray) {
                   <p class="text-gray-700 text-base pt-5 pb-2">
                     ${
 						level === 1 ? "Entry" : level === 2 ? "Mid" : "Senior"
-					} Level -Est budget $${price
-			.shiftedBy(-ERC20_DECIMALS)
-			.toFixed(2)}
+					} Level -Est budget $${calculatePrice(price)}
                   </p>
                   <p class="text-gray-700 text-base">${description}</p>
                 </div>
@@ -220,9 +222,7 @@ async function hireTalent(index) {
 	const talent = talentList[index];
 	showNotification({
 		header: `Precessing Hire Talent ${talent.name}`,
-		description: `Talent ${talent.name} is hired for ${talent.price
-			.shiftedBy(-ERC20_DECIMALS)
-			.toFixed(2)}`,
+		description: `Talent ${talent.name} is hired for ${calculatePrice(talent.price)}`,
 	});
 	try {
 		await approve(talentList[index].price);
@@ -358,9 +358,7 @@ function handelRegistrationFormSubmission(e) {
 		formElement[5].value,
 		formElement[6].value,
 		dateFunction(),
-		new BigNumber(formElement[2].value)
-			.shiftedBy(ERC20_DECIMALS)
-			.toString(),
+		new BigNumber(calculatePrice(formElement[2].value))
 	];
 
 	saveNewTalent(newTalent);
@@ -486,10 +484,9 @@ function handelLogin() {
 	profileDivElement[2].innerHTML = profile.skills;
 	profileDivElement[3].innerHTML = profile.description;
 	profileDivElement[4].innerHTML = profile.level;
-	profileDivElement[5].innerHTML = `$${profile.price}`;
+	profileDivElement[5].innerHTML = `$${profile.price / 1000000000000000000}`;
 	profileDivElement[6].innerHTML = `${profile.hireCount} times`;
 	profileDivElement[7].innerHTML = profile.date;
-
 	openPage(0);
 }
 
